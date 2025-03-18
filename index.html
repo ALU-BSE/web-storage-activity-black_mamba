@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INKINDI Collections</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="nav-bar">
+                <div class="brand">
+                    <i class="fas fa-lock"></i> INKINDI COLLECTIONS
+                </div>
+                <div class="controls">
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <span class="cart-counter" id="cartCounter">0</span>
+                    <button class="logout-btn" id="logoutBtn" style="display: none;">
+                        Logout <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Authentication Section -->
+        <section class="auth-card" id="authSection">
+            <h2><i class="fas fa-user-shield"></i> INKINDI COLLECTION LOGIN</h2>
+            <form id="loginForm">
+                <input type="hidden" id="csrfToken" name="csrfToken">
+                <div class="form-group">
+                    <input type="email" id="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+                <button type="submit">Login <i class="fas fa-sign-in-alt"></i></button>
+            </form>
+        </section>
+
+        <!-- Products Section -->
+        <section class="products-section" id="productsSection" style="display: none;">
+            <div class="products-grid">
+                <!-- Premium Denim Jacket -->
+                <article class="product-card">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTixQgb6zcupbEuru8B5PwjKbJ3gh8fjAATfQ&s" class="product-image" alt="Premium Denim Jacket">
+                    <div class="product-info">
+                        <h3 class="product-title">Premium Denim Jacket</h3>
+                        <p class="product-price">$19</p>
+                        <div class="product-controls">
+                            <select class="size-select">
+                                <option value="">Size</option>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                            </select>
+                            <input type="number" class="quantity-input" min="1" value="1">
+                        </div>
+                        <button class="add-to-cart">
+                            <i class="fas fa-shopping-bag"></i>
+                            Add to Cart
+                        </button>
+                    </div>
+                </article>
+
+                <!-- Cashmere Sweater -->
+                <article class="product-card">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQc2IPyEpURHln-O7_JF8wjnkHKROEVkNT6oQ&s" class="product-image" alt="Cashmere Sweater">
+                    <div class="product-info">
+                        <h3 class="product-title">Cashmere Sweater</h3>
+                        <p class="product-price">$29</p>
+                        <div class="product-controls">
+                            <select class="size-select">
+                                <option value="">Size</option>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                            </select>
+                            <input type="number" class="quantity-input" min="1" value="1">
+                        </div>
+                        <button class="add-to-cart">
+                            <i class="fas fa-shopping-bag"></i>
+                            Add to Cart
+                        </button>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Order History -->
+            <section class="order-history">
+                <h2><i class="fas fa-clock"></i> Order History</h2>
+                <div class="table-container">
+                    <table class="order-table">
+                        <thead>
+                            <tr>
+                                <th>Date / Time</th>
+                                <th>Product</th>
+                                <th>Size</th>
+                                <th>Qty</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderTable">
+                            <!-- Orders will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+
+        <!-- Cart Section -->
+        <section class="cart-section" id="cartSection" style="display: none;">
+            <h2><i class="fas fa-shopping-cart"></i> Your Cart</h2>
+            <div id="cartItems"></div>
+        </section>
+    </main>
+
+    <div class="notification" id="notification"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

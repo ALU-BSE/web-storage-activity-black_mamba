@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inkanda Collection | Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #f0f2f5;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 400px;
+            margin: 1rem;
+        }
+
+        .input-group {
+            position: relative;
+            margin: 1rem 0;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 40px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #977005;;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #5e4603;;
+        }
+
+        .logout-section {
+            text-align: center;
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            input, button {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="loginForm">
+            <h2 style="text-align: center; margin-bottom: 1rem;">Login <i class="fas fa-sign-in-alt"></i></h2>
+            <div class="input-group">
+                <i class="fas fa-user icon"></i>
+                <input type="text" 
+                       id="usernameInput" 
+                       placeholder="Username"
+                       autocomplete="username"
+                       required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-key icon"></i>
+                <input type="password" 
+                       id="passwordInput" 
+                       placeholder="Password"
+                       autocomplete="current-password"
+                       required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+
+        <div class="logout-section" id="logoutSection">
+            <h3>Welcome back! <i class="fas fa-hand-wave"></i></h3>
+            <button onclick="logout()">Logout <i class="fas fa-sign-out-alt"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // Cookie management utilities
+        const COOKIE_NAME = 'authToken';
+        const COOKIE_DAYS = 7;
+
+        function setAuthCookie() {
+            const expiration = new Date();
+            expiration.setDate(expiration.getDate() + COOKIE_DAYS);
+            document.cookie = `${COOKIE_NAME}=user123; expires=${expiration.toUTCString()}; Secure; path=/`;
+        }
+
+        function deleteAuthCookie() {
+            document.cookie = `${COOKIE_NAME}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+        }
+
+        function checkAuthState() {
+            const authToken = document.cookie
+                .split('; ')
+                .find(row => row.startsWith(`${COOKIE_NAME}=`))
+                ?.split('=')[1];
+
+            if(authToken) {
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('logoutSection').style.display = 'block';
+            }
+        }
+
+        // Form handling
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            setAuthCookie();
+            checkAuthState();
+        });
+
+        function logout() {
+            deleteAuthCookie();
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('logoutSection').style.display = 'none';
+            document.getElementById('usernameInput').value = '';
+            document.getElementById('passwordInput').value = '';
+        }
+
+        // Initial state check
+        checkAuthState();
+    </script>
+</body>
+</html>

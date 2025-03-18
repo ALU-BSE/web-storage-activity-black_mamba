@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Preferences</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #242526;
+            --secondary-color: #ffffff;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --transition: all 0.3s ease;
+        }
+
+        .dark-theme {
+            --primary-color: #e4e6eb;
+            --secondary-color: #18191a;
+            --bg-color: #0c0c0c;
+            --card-bg: #242526;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: var(--card-bg);
+            border: none;
+            padding: 0.8rem;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .settings-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .theme-toggle {
+                top: 0.5rem;
+                right: 0.5rem;
+                padding: 0.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <button class="theme-toggle" aria-label="Toggle theme">
+            <i class="fas fa-moon"></i>
+        </button>
+    </header>
+
+    <main class="container">
+        <div class="settings-card">
+            <h1>Theme Preferences</h1>
+            <p>Current theme: <span id="themeStatus">light</span></p>
+            
+            <!-- Challenge: Font Size Control -->
+            <div style="margin-top: 2rem;">
+                <label for="fontSize">Font Size:</label>
+                <input type="number" id="fontSize" min="12" max="24" value="16">
+                <button onclick="updateFontSize()">Update</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Initialize settings object
+        let appSettings = {
+            theme: 'light',
+            fontSize: 16
+        };
+
+        // DOM Elements
+        const themeToggle = document.querySelector('.theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+        const themeStatus = document.getElementById('themeStatus');
+        const fontSizeInput = document.getElementById('fontSize');
+
+        // Load saved settings
+        function loadSettings() {
+            try {
+                const savedSettings = localStorage.getItem('appSettings');
+                if (savedSettings) {
+                    appSettings = JSON.parse(savedSettings);
+                    applySettings();
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
+                handleStorageError(error);
+            }
+        }
+
+        // Save settings to localStorage
+        function saveSettings() {
+            try {
+                localStorage.setItem('appSettings', JSON.stringify(appSettings));
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                handleStorageError(error);
+            }
+        }
+
+        // Apply current settings
+        function applySettings() {
+            // Theme application
+            document.body.classList.toggle('dark-theme', appSettings.theme === 'dark');
+            themeIcon.className = appSettings.theme === 'dark' 
+                ? 'fas fa-sun' 
+                : 'fas fa-moon';
+            themeStatus.textContent = appSettings.theme;
+
+            // Font size application
+            document.body.style.fontSize = `${appSettings.fontSize}px`;
+            fontSizeInput.value = appSettings.fontSize;
+        }
+
+        // Theme toggle handler
+        themeToggle.addEventListener('click', () => {
+            appSettings.theme = appSettings.theme === 'light' ? 'dark' : 'light';
+            applySettings();
+            saveSettings();
+        });
+
+        // Font size update handler
+        function updateFontSize() {
+            const newSize = parseInt(fontSizeInput.value);
+            if (!isNaN(newSize) && newSize >= 12 && newSize <= 24) {
+                appSettings.fontSize = newSize;
+                applySettings();
+                saveSettings();
+            }
+        }
+
+        // Error handling for localStorage
+        function handleStorageError(error) {
+            if (error.name === 'QuotaExceededError') {
+                alert('Storage limit exceeded! Clearing old settings...');
+                localStorage.clear();
+            }
+        }
+
+        // Initial load
+        loadSettings();
+    </script>
+</body>
+</html>

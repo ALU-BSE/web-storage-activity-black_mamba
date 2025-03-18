@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Application</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        :root {
+            --primary: #2A2A2A;
+            --secondary: #aa6b06;
+            --accent: #2196F3;
+            --error: #f44336;
+            --background: #f5f5f5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .security-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .security-icon {
+            font-size: 2rem;
+            color: var(--secondary);
+        }
+
+        .security-form {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        input, textarea {
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        button {
+            background: var(--secondary);
+            color: white;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        .encrypted-data {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            word-break: break-all;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            background: var(--secondary);
+            color: white;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .security-header {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="security-header">
+            <i class="fas fa-shield-alt security-icon"></i>
+            <h1>Secure Data Management</h1>
+        </div>
+
+        <form id="secureForm" class="security-form">
+            <!-- CSRF Token (Simulated Server-side Generation) -->
+            <input type="hidden" id="csrfToken" name="csrfToken">
+
+            <div class="form-group">
+                <label for="email">Email (Encrypted Storage):</label>
+                <input type="email" id="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="message">Message (Sanitized Display):</label>
+                <textarea id="message" rows="4" required></textarea>
+            </div>
+
+            <button type="submit">
+                <i class="fas fa-lock"></i>
+                Secure Submit
+            </button>
+        </form>
+
+        <div class="encrypted-data" id="encryptedDisplay">
+            <h3>Encrypted Data Storage:</h3>
+            <p id="encryptedEmail"></p>
+        </div>
+
+        <div class="notification" id="notification">
+            Data secured successfully! <i class="fas fa-check-circle"></i>
+        </div>
+    </div>
+
+    <script>
+        // Generate CSRF Token
+        const generateCSRFToken = () => {
+            return Math.random().toString(36).substr(2, 15) + 
+                   Math.random().toString(36).substr(2, 15);
+        };
+
+        // Initialize CSRF Protection
+        const csrfToken = generateCSRFToken();
+        document.getElementById('csrfToken').value = csrfToken;
+
+        // Encryption Configuration
+        const SECRET_KEY = CryptoJS.lib.WordArray.random(128/8).toString();
+        
+        // Security Functions
+        const sanitizeInput = (input) => {
+            return encodeURIComponent(input)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        };
+
+        const encryptData = (data) => {
+            return CryptoJS.AES.encrypt(data, SECRET_KEY).toString();
+        };
+
+        const decryptData = (ciphertext) => {
+            const bytes = CryptoJS.AES.decrypt(ciphertext, SECRET_KEY);
+            return bytes.toString(CryptoJS.enc.Utf8);
+        };
+
+        // Form Handling
+        document.getElementById('secureForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // CSRF Validation
+            const formToken = document.getElementById('csrfToken').value;
+            if (!formToken || formToken !== csrfToken) {
+                alert('Invalid CSRF Token!');
+                return;
+            }
+
+            // Get and sanitize inputs
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+
+            // Encrypt sensitive data
+            const encryptedEmail = encryptData(email);
+            
+            // Sanitize message for display
+            const sanitizedMessage = sanitizeInput(message);
+
+            // Store encrypted data
+            localStorage.setItem('encryptedEmail', encryptedEmail);
+
+            // Display results
+            document.getElementById('encryptedEmail').textContent = encryptedEmail;
+            document.getElementById('notification').style.display = 'block';
+
+            // Show decrypted data (for demonstration only)
+            setTimeout(() => {
+                const decrypted = decryptData(encryptedEmail);
+                console.log('Decrypted Email:', decrypted);
+            }, 1000);
+
+            setTimeout(() => {
+                document.getElementById('notification').style.display = 'none';
+            }, 3000);
+        });
+
+        // Initialize encrypted data display
+        const storedEmail = localStorage.getItem('encryptedEmail');
+        if (storedEmail) {
+            document.getElementById('encryptedEmail').textContent = storedEmail;
+        }
+    </script>
+</body>
+</html>

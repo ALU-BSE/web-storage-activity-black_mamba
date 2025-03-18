@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inkanda Collection | Carts</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #977005;
+            --secondary: #aa6b06;
+            --accent: #E8E8E8;
+            --text: #4A4A4A;
+            --success: #28a745;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #FAFAFA;
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.1rem 0.5rem;
+        }
+
+        header {
+            background: var(--primary);
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .brand {
+            font-size: 1.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .cart-counter {
+            background: var(--secondary);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 380px;
+            object-fit: cover;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .product-info {
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .product-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .product-price {
+            color: var(--secondary);
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-controls {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .size-select {
+            flex: 1;
+            padding: 0.6rem;
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .quantity-input {
+            width: 70px;
+            padding: 0.6rem;
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+        }
+
+        .add-to-cart:hover {
+            background: var(--secondary);
+            transform: scale(1.02);
+        }
+
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-top: 2rem;
+        }
+
+        .order-table thead {
+            background: var(--primary);
+            color: white;
+        }
+
+        .order-table th {
+            padding: 1.2rem;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .order-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--accent);
+        }
+
+        .order-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--success);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .order-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .container {
+                padding: 1.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="nav-bar">
+                <div class="brand">
+                    <i class="fas fa-crown"></i>
+                    Inkanda Collection
+                </div>
+                <div class="cart-counter" id="cartCounter">0 items</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="products-grid">
+            <!-- Premium Denim Jacket -->
+            <article class="product-card">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTixQgb6zcupbEuru8B5PwjKbJ3gh8fjAATfQ&s" class="product-image" alt="Premium Denim Jacket">
+                <div class="product-info">
+                    <h3 class="product-title">Premium Denim Jacket</h3>
+                    <p class="product-price">$18</p>
+                    <div class="product-controls">
+                        <select class="size-select">
+                            <option value="">Size</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                        </select>
+                        <input type="number" class="quantity-input" min="1" value="1">
+                    </div>
+                    <button class="add-to-cart" onclick="addToCart('Premium Denim Jacket', 189.99)">
+                        <i class="fas fa-shopping-bag"></i>
+                        Add to Cart
+                    </button>
+                </div>
+            </article>
+
+            <!-- Cashmere Sweater -->
+            <article class="product-card">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQc2IPyEpURHln-O7_JF8wjnkHKROEVkNT6oQ&s" class="product-image" alt="Cashmere Sweater">
+                <div class="product-info">
+                    <h3 class="product-title">Cashmere Sweater</h3>
+                    <p class="product-price">$24</p>
+                    <div class="product-controls">
+                        <select class="size-select">
+                            <option value="">Size</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                        </select>
+                        <input type="number" class="quantity-input" min="1" value="1">
+                    </div>
+                    <button class="add-to-cart" onclick="addToCart('Cashmere Sweater', 249.99)">
+                        <i class="fas fa-shopping-bag"></i>
+                        Add to Cart
+                    </button>
+                </div>
+            </article>
+        </div>
+
+        <section class="order-history">
+            <h2>Order History <i class="fas fa-clock"></i></h2>
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th>Date / Time</th>
+                        <th>Product</th>
+                        <th>Size</th>
+                        <th>Qty</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="orderTable">
+                    <!-- Orders will be populated here -->
+                </tbody>
+            </table>
+        </section>
+
+        <div class="notification" id="notification">
+            Item added to cart!
+        </div>
+    </main>
+
+    <script>
+        function showNotification() {
+            const notif = document.getElementById('notification');
+            notif.style.display = 'block';
+            setTimeout(() => {
+                notif.style.display = 'none';
+            }, 2000);
+        }
+
+        function updateCartCounter() {
+            const orders = JSON.parse(sessionStorage.getItem('orders')) || [];
+            document.getElementById('cartCounter').textContent = 
+                `${orders.length} ${orders.length === 1 ? 'item' : 'items'}`;
+        }
+
+        function addToCart(productName, price) {
+            const productCard = event.target.closest('.product-card');
+            const size = productCard.querySelector('.size-select').value;
+            const quantity = productCard.querySelector('.quantity-input').value;
+
+            if (!size) {
+                alert('Please select a size');
+                return;
+            }
+
+            const order = {
+                date: new Date().toLocaleString(),
+                product: productName,
+                size: size,
+                quantity: parseInt(quantity),
+                price: price,
+                total: (price * quantity).toFixed(2)
+            };
+
+            let orders = JSON.parse(sessionStorage.getItem('orders')) || [];
+            orders.push(order);
+            sessionStorage.setItem('orders', JSON.stringify(orders));
+
+            updateOrderTable();
+            updateCartCounter();
+            showNotification();
+        }
+
+        function updateOrderTable() {
+            const orders = JSON.parse(sessionStorage.getItem('orders')) || [];
+            const tableBody = document.getElementById('orderTable');
+            
+            tableBody.innerHTML = orders.map(order => `
+                <tr>
+                    <td>${order.date}</td>
+                    <td>${order.product}</td>
+                    <td>${order.size}</td>
+                    <td>${order.quantity}</td>
+                    <td>$${order.total}</td>
+                </tr>
+            `).join('');
+
+            if (orders.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 2rem;">
+                            No orders yet. Start shopping!
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // Initialize
+        updateCartCounter();
+        updateOrderTable();
+    </script>
+</body>
+</html>

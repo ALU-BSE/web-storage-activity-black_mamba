@@ -79,7 +79,7 @@ localStorage.setItem('user', CryptoJS.AES.encrypt(email, 'INKINDI_SECRET_KEY'));
 
 ## Collaboration
 - Tasks were assigned to developers and tracked via GitHub Projects.
-- Team members: @Pnayiturik, @NadiaTeta, @ndivine-eng, @Daniel-IRYIVUZE.
+- Team members: @Patrick Nayituriki, @Nadia Teta, @Nubuhoro Divine, @ Daniel IRYIVUZE.
 
 ## Acknowledgments
 Thanks to the Inkindi team for their dedication in building a secure and stylish e-commerce platform for African fashion! 🎉
